@@ -10,9 +10,7 @@ export default function Map() {
   const [latText, setLatText] = useState(""); // 위도 입력값
   const [lngText, setLngText] = useState(""); // 경도 입력값
 
-  const [shuttleStopsLine1, setShuttleStopsLine1] = useState<any[]>([]);
-  const [shuttleStopsLine2, setShuttleStopsLine2] = useState<any[]>([]);
-  const [shuttleStopsLine3, setShuttleStopsLine3] = useState<any[]>([]);
+  const [shuttleStops, setShuttleStops] = useState<any[]>([[], [], []]); // 각 노선의 정류소를 담는 배열
 
   useEffect(() => {
     const fetchShuttleStops = async () => {
@@ -20,11 +18,8 @@ export default function Map() {
       const line2 = await getShuttleStopsByLineRequest(2);
       const line3 = await getShuttleStopsByLineRequest(3);
 
-      setShuttleStopsLine1(line1);
-      setShuttleStopsLine2(line2);
-      setShuttleStopsLine3(line3);
+      setShuttleStops([line1, line2, line3]);
     };
-
     fetchShuttleStops();
 
     const script = document.createElement("script");
@@ -45,23 +40,28 @@ export default function Map() {
     };
   }, []);
 
-  useEffect(() => {
-    if (map && shuttleStopsLine1.length > 0) {
-      // 1노선 마커 추가
-      shuttleStopsLine1.forEach((stop, index) => {
-        const position = new window.naver.maps.LatLng(stop.lat, stop.lng);
-        new window.naver.maps.Marker({
-          position,
-          map: map,
-          title: `${index + 1}. ${stop.name}`,
-          icon: {
-            content: '<div style="color: red; font-size: 14px;">★</div>',
-            size: new window.naver.maps.Size(20, 20),
-          },
-        });
+  // 공통되는 부분 함수화
+  const addMarkers = (stops: any[], lineIndex: number) => {
+    const positions = stops.map(
+      (stop, index) => new window.naver.maps.LatLng(stop.lat, stop.lng)
+    );
 
+    // 마커 추가
+    stops.forEach((stop, index) => {
+      const position = positions[index];
+      new window.naver.maps.Marker({
+        position,
+        map: map,
+        title: `${index + 1}. ${stop.name}`,
+        icon: {
+          content: '<div style="color: red; font-size: 14px;">★</div>',
+          size: new window.naver.maps.Size(20, 20),
+        },
+      });
+
+      if (index !== stops.length - 1) {
         const labelPosition = new window.naver.maps.LatLng(
-          stop.lat + 0.0001,
+          stop.lat + 0.000001,
           stop.lng
         );
         new window.naver.maps.Marker({
@@ -75,21 +75,33 @@ export default function Map() {
             anchor: new window.naver.maps.Point(50, 15),
           },
         });
+      }
+    });
 
-        // 1노선 마커를 연결하는 선 그리기
-        const linePath1 = shuttleStopsLine1.map(
-          (stop) => new window.naver.maps.LatLng(stop.lat, stop.lng)
-        );
-        const polyline1 = new window.naver.maps.Polyline({
-          path: linePath1,
-          strokeColor: "#FF0000", // 빨간색
-          strokeOpacity: 1,
-          strokeWeight: 5,
-        });
-        polyline1.setMap(map); // 지도에 선 추가
+    // 선 그리기
+    if (positions.length > 1) {
+      const strokeColor =
+        lineIndex === 1 ? "#FF0000" : lineIndex === 2 ? "#FFA500" : "#FFFF00"; // 빨강, 주황, 노랑
+      new window.naver.maps.Polyline({
+        path: positions,
+        strokeColor: strokeColor,
+        strokeWeight: 4,
+        map: map,
       });
     }
-  }, [map, shuttleStopsLine1]); // map과 shuttleStopsLine1이 업데이트될 때마다 실행
+  };
+
+  // 마커와 선 그리기
+  useEffect(() => {
+    if (map) {
+      shuttleStops.forEach((lineStops, index) => {
+        if (lineStops.length > 0) {
+          addMarkers(lineStops, index + 1);
+        }
+      });
+    }
+  }, [map, shuttleStops]); // map과 shuttleStops가 업데이트될 때마다 실행
+
   // 위도와 경도로 위치 찾기
   const onSubmitLatAndLng = () => {
     const lat = parseFloat(latText);
