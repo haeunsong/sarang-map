@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { getShuttleStopsByLineRequest } from "../apis";
 
 declare const window: typeof globalThis & {
   naver: any;
@@ -9,48 +10,23 @@ export default function Map() {
   const [latText, setLatText] = useState(""); // 위도 입력값
   const [lngText, setLngText] = useState(""); // 경도 입력값
 
-  // 1노선 정류소 데이터
-  const shuttleStopsLine1 = [
-    { name: "서초역1번출구", lat: 37.492444, lng: 127.009669 },
-    { name: "롯데칠성", lat: 37.489, lng: 127.016525 },
-    { name: "강남역9번출구", lat: 37.497985, lng: 127.026897 },
-    { name: "서초초등학교", lat: 37.498708, lng: 127.024068 },
-    { name: "진흥아파트", lat: 37.496987, lng: 127.023484 },
-    { name: "서초역1번출구", lat: 37.492444, lng: 127.009669 },
-  ];
-
-  // 2노선 정류소 데이터
-  const shuttleStopsLine2 = [
-    { name: "교회 올리브영 앞", lat: 37.489522, lng: 127.008956 },
-    { name: "국립중앙도서관 맞은편", lat: 37.498039, lng: 127.004828 },
-    { name: "성모병원", lat: 37.499663, lng: 127.004314 },
-    { name: "반포 한강 시민공원", lat: 37.510605, lng: 126.996247 },
-    { name: "효성빌딩(조달약국)", lat: 37.500709, lng: 127.003431 },
-    { name: "국립중앙도서관", lat: 37.498356, lng: 127.004095 },
-    { name: "교회서초빌딩 앞", lat: 37.489777, lng: 127.00854 },
-    { name: "동광빌딩 앞", lat: 37.48142, lng: 127.012781 },
-    { name: "이디야카페 앞", lat: 37.482085, lng: 127.012284 },
-    { name: "교회 올리브영 앞", lat: 37.489522, lng: 127.008956 },
-  ];
-  const shuttleStopsLine3 = [
-    { name: "교회 스타벅스 앞", lat: 37.490542, lng: 127.008402 },
-    { name: "유원 아파트(국민은행 앞)", lat: 37.495486, lng: 127.018366 },
-    { name: "서초 래미안 남문", lat: 37.497395, lng: 127.020529 },
-    { name: "반포고", lat: 37.501559, lng: 127.016127 },
-    { name: "서초 구립 반포도서관 맞은편", lat: 37.502761, lng: 127.012386 },
-    { name: "동아 아파트", lat: 37.502761, lng: 127.012386 },
-    { name: "잠원역 1번출구", lat: 37.512958, lng: 127.011584 },
-    { name: "잠원역4번 출구", lat: 37.513026, lng: 127.011592 },
-    { name: "동아 아파트", lat: 37.509027, lng: 127.011173 },
-    { name: "서초 구립 반포도서관", lat: 37.502706, lng: 127.01246 },
-    { name: "반포고", lat: 37.501455, lng: 127.016227 },
-    { name: "서초래미안 정문", lat: 37.500387, lng: 127.018843 },
-    { name: "서초 래미안 남문", lat: 37.497407, lng: 127.02029 },
-    { name: "유원 아파트(국민은행 앞)", lat: 37.497482, lng: 127.020363 },
-    { name: "교회 스타벅스 앞", lat: 37.490542, lng: 127.008402 },
-  ];
+  const [shuttleStopsLine1, setShuttleStopsLine1] = useState<any[]>([]);
+  const [shuttleStopsLine2, setShuttleStopsLine2] = useState<any[]>([]);
+  const [shuttleStopsLine3, setShuttleStopsLine3] = useState<any[]>([]);
 
   useEffect(() => {
+    const fetchShuttleStops = async () => {
+      const line1 = await getShuttleStopsByLineRequest(1);
+      const line2 = await getShuttleStopsByLineRequest(2);
+      const line3 = await getShuttleStopsByLineRequest(3);
+
+      setShuttleStopsLine1(line1);
+      setShuttleStopsLine2(line2);
+      setShuttleStopsLine3(line3);
+    };
+
+    fetchShuttleStops();
+
     const script = document.createElement("script");
     script.src =
       "https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=61viz7dkel&submodules=geocoder";
@@ -58,150 +34,10 @@ export default function Map() {
 
     script.onload = () => {
       const initialMap = new window.naver.maps.Map("map", {
-        center: new window.naver.maps.LatLng(37.492444, 127.009669), // 초기 위치
-        zoom: 13, // 초기 줌 레벨
+        center: new window.naver.maps.LatLng(37.492444, 127.009669),
+        zoom: 13,
       });
-      setMap(initialMap); // 지도 객체를 state에 저장
-
-      // 1노선 마커 추가
-      shuttleStopsLine1.forEach((stop, index) => {
-        const position = new window.naver.maps.LatLng(stop.lat, stop.lng);
-        new window.naver.maps.Marker({
-          position,
-          map: initialMap,
-          title: `${index + 1}. ${stop.name}`, // 순서 번호 추가
-          icon: {
-            content: '<div style="color: red; font-size: 14px;">★</div>', // 빨간색 별 마커
-            size: new window.naver.maps.Size(20, 20),
-          },
-        });
-
-        // 마커 옆에 정류소 이름과 번호 추가
-        const labelPosition = new window.naver.maps.LatLng(
-          stop.lat + 0.0001,
-          stop.lng
-        ); // 마커 위에 표시
-        if (index == shuttleStopsLine1.length - 1) {
-          return;
-        } else {
-          new window.naver.maps.Marker({
-            position: labelPosition,
-            map: initialMap,
-            icon: {
-              content: `<div style="color: black; font-size: 14px;">${
-                index + 1
-              }. ${stop.name}</div>`, // 번호와 이름 표시
-              size: new window.naver.maps.Size(100, 30), // 라벨 크기 조정
-              anchor: new window.naver.maps.Point(50, 15), // 앵커 포인트 설정
-            },
-          });
-        }
-      });
-
-      // 2노선 마커 추가 (초록색)
-      shuttleStopsLine2.forEach((stop, index) => {
-        const position = new window.naver.maps.LatLng(stop.lat, stop.lng);
-        new window.naver.maps.Marker({
-          position,
-          map: initialMap,
-          title: `${index + 1}. ${stop.name}`, // 순서 번호 추가
-          icon: {
-            content: '<div style="color: green; font-size: 14px;">★</div>', // 초록색 별 마커
-            size: new window.naver.maps.Size(20, 20),
-          },
-        });
-        // 마커 옆에 정류소 이름과 번호 추가
-        const labelPosition = new window.naver.maps.LatLng(
-          stop.lat + 0.0001,
-          stop.lng
-        ); // 마커 위에 표시
-        if (index == shuttleStopsLine2.length - 1) {
-          return;
-        } else {
-          new window.naver.maps.Marker({
-            position: labelPosition,
-            map: initialMap,
-            icon: {
-              content: `<div style="color: black; font-size: 14px;">${
-                index + 1
-              }. ${stop.name}</div>`, // 번호와 이름 표시
-              size: new window.naver.maps.Size(100, 30), // 라벨 크기 조정
-              anchor: new window.naver.maps.Point(50, 15), // 앵커 포인트 설정
-            },
-          });
-        }
-      });
-
-      // 3노선 마커 추가 (파란색)
-      shuttleStopsLine3.forEach((stop, index) => {
-        const position = new window.naver.maps.LatLng(stop.lat, stop.lng);
-        new window.naver.maps.Marker({
-          position,
-          map: initialMap,
-          title: `${index + 1}. ${stop.name}`, // 순서 번호 추가
-          icon: {
-            content: '<div style="color: blue; font-size: 14px;">★</div>', // 파란색 별 마커
-            size: new window.naver.maps.Size(20, 20),
-          },
-        });
-
-        // 마커 옆에 정류소 이름과 번호 추가
-        const labelPosition = new window.naver.maps.LatLng(
-          stop.lat + 0.0001,
-          stop.lng
-        ); // 마커 위에 표시
-        if (index == shuttleStopsLine3.length - 1) {
-          return;
-        } else {
-          new window.naver.maps.Marker({
-            position: labelPosition,
-            map: initialMap,
-            icon: {
-              content: `<div style="color: black; font-size: 14px;">${
-                index + 1
-              }. ${stop.name}</div>`, // 번호와 이름 표시
-              size: new window.naver.maps.Size(100, 30), // 라벨 크기 조정
-              anchor: new window.naver.maps.Point(50, 15), // 앵커 포인트 설정
-            },
-          });
-        }
-      });
-
-      // 1노선 마커를 연결하는 선 그리기
-      const linePath1 = shuttleStopsLine1.map(
-        (stop) => new window.naver.maps.LatLng(stop.lat, stop.lng)
-      );
-      const polyline1 = new window.naver.maps.Polyline({
-        path: linePath1,
-        strokeColor: "#FF0000", // 빨간색
-        strokeOpacity: 1,
-        strokeWeight: 5,
-      });
-      polyline1.setMap(initialMap); // 지도에 선 추가
-
-      // 2노선 마커를 연결하는 선 그리기 (초록색)
-      const linePath2 = shuttleStopsLine2.map(
-        (stop) => new window.naver.maps.LatLng(stop.lat, stop.lng)
-      );
-      const polyline2 = new window.naver.maps.Polyline({
-        path: linePath2,
-        strokeColor: "#00FF00", // 초록색
-        strokeOpacity: 1,
-        strokeWeight: 5,
-      });
-      polyline2.setMap(initialMap); // 지도에 선 추가
-
-      // 3노선 마커를 연결하는 선 그리기 (파란색)
-      const linePath3 = shuttleStopsLine3.map(
-        (stop) => new window.naver.maps.LatLng(stop.lat, stop.lng)
-      );
-      const polyline3 = new window.naver.maps.Polyline({
-        path: linePath3,
-        strokeColor: "#0000FF", // 초록색
-        strokeOpacity: 1,
-        strokeWeight: 5,
-      });
-      polyline3.setMap(initialMap); // 지도에 선 추가
+      setMap(initialMap);
     };
 
     return () => {
@@ -209,6 +45,51 @@ export default function Map() {
     };
   }, []);
 
+  useEffect(() => {
+    if (map && shuttleStopsLine1.length > 0) {
+      // 1노선 마커 추가
+      shuttleStopsLine1.forEach((stop, index) => {
+        const position = new window.naver.maps.LatLng(stop.lat, stop.lng);
+        new window.naver.maps.Marker({
+          position,
+          map: map,
+          title: `${index + 1}. ${stop.name}`,
+          icon: {
+            content: '<div style="color: red; font-size: 14px;">★</div>',
+            size: new window.naver.maps.Size(20, 20),
+          },
+        });
+
+        const labelPosition = new window.naver.maps.LatLng(
+          stop.lat + 0.0001,
+          stop.lng
+        );
+        new window.naver.maps.Marker({
+          position: labelPosition,
+          map: map,
+          icon: {
+            content: `<div style="color: black; font-size: 14px;">${
+              index + 1
+            }. ${stop.name}</div>`,
+            size: new window.naver.maps.Size(100, 30),
+            anchor: new window.naver.maps.Point(50, 15),
+          },
+        });
+
+        // 1노선 마커를 연결하는 선 그리기
+        const linePath1 = shuttleStopsLine1.map(
+          (stop) => new window.naver.maps.LatLng(stop.lat, stop.lng)
+        );
+        const polyline1 = new window.naver.maps.Polyline({
+          path: linePath1,
+          strokeColor: "#FF0000", // 빨간색
+          strokeOpacity: 1,
+          strokeWeight: 5,
+        });
+        polyline1.setMap(map); // 지도에 선 추가
+      });
+    }
+  }, [map, shuttleStopsLine1]); // map과 shuttleStopsLine1이 업데이트될 때마다 실행
   // 위도와 경도로 위치 찾기
   const onSubmitLatAndLng = () => {
     const lat = parseFloat(latText);
