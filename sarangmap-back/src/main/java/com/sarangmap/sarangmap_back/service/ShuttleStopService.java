@@ -1,6 +1,6 @@
 package com.sarangmap.sarangmap_back.service;
 
-import com.sarangmap.sarangmap_back.dto.ShuttleStopDto;
+import com.sarangmap.sarangmap_back.dto.response.ShuttleStopResponseDto;
 import com.sarangmap.sarangmap_back.entity.ShuttleStop;
 import com.sarangmap.sarangmap_back.repository.ShuttleStopRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,19 +12,14 @@ import java.util.List;
 @Service
 public class ShuttleStopService {
 
-    private final ShuttleStopRepository shuttleRepository;
+    private final ShuttleStopRepository shuttleStopRepository;
 
-    public List<ShuttleStopDto> getShuttleStops(int line) {
-        return shuttleRepository.findByLine(line)
-                .stream()
-                .map(shuttleStop -> {
-                    return ShuttleStopDto.builder()
-                            .shuttleStopId(shuttleStop.getShuttleStopId())
-                            .name(shuttleStop.getName())
-                            .lat(shuttleStop.getLat())
-                            .lng(shuttleStop.getLng())
-                            .line(shuttleStop.getLine())
-                            .build();
-                }).toList();
+    // 각 노선별 정류소 목록을 가져온다.
+    public List<ShuttleStopResponseDto> getShuttleStops(int line) {
+        List<ShuttleStop> shuttleStopList = shuttleStopRepository.findByLine(line);
+
+        return shuttleStopList.stream()
+                .map(ShuttleStopResponseDto::from)
+                .toList();
     }
 }
