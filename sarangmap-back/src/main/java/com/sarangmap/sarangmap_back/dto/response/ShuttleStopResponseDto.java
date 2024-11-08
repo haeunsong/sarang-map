@@ -13,7 +13,8 @@ public record ShuttleStopResponseDto(
         String name, // 정류소 이름
         BigDecimal lat,
         BigDecimal lng,
-        int line // 정류소가 속한 노선 번호
+        int line, // 정류소가 속한 노선 번호
+        Long number
 ) {
     // 정적 팩토리 메서드 선언
     public static ShuttleStopResponseDto from(ShuttleStop shuttleStop) {
@@ -23,6 +24,7 @@ public record ShuttleStopResponseDto(
                 .lat(shuttleStop.getLat())
                 .lng(shuttleStop.getLng())
                 .line(shuttleStop.getLine())
+                .number(shuttleStop.getNumber())
                 .build();
     }
 }
