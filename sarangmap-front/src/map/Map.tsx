@@ -18,6 +18,7 @@ export default function Map() {
       const line2 = await getShuttleStopsByLineRequest(2);
       const line3 = await getShuttleStopsByLineRequest(3);
 
+      console.log("Fetched Stops:", line1, line2, line3);
       setShuttleStops([line1, line2, line3]);
     };
     fetchShuttleStops();
@@ -32,6 +33,7 @@ export default function Map() {
         center: new window.naver.maps.LatLng(37.492444, 127.009669),
         zoom: 13,
       });
+      console.log("Map initialized:", initialMap);
       setMap(initialMap);
     };
 
@@ -94,13 +96,15 @@ export default function Map() {
   // 마커와 선 그리기
   useEffect(() => {
     if (map) {
-      shuttleStops.forEach((lineStops, index) => {
-        if (lineStops.length > 0) {
+      shuttleStops.forEach((lineStopsObj, index) => {
+        const lineStops = lineStopsObj.shuttleStopDtos; // shuttleStopDtos에 접근
+        if (lineStops && lineStops.length > 0) {
+          console.log("addMarker()");
           addMarkers(lineStops, index + 1);
         }
       });
     }
-  }, [map, shuttleStops]); // map과 shuttleStops가 업데이트될 때마다 실행
+  }, [map, shuttleStops]);
 
   // 위도와 경도로 위치 찾기
   const onSubmitLatAndLng = () => {

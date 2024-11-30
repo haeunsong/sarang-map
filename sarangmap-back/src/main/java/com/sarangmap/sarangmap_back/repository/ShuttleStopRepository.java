@@ -10,4 +10,5 @@ import java.util.List;
 public interface ShuttleStopRepository extends JpaRepository<ShuttleStop, Integer> {
 
     List<ShuttleStop> findByLine(int line);
+//    List<ShuttleStop> save(ShuttleStop stop);
 }

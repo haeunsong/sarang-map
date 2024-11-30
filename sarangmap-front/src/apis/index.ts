@@ -5,7 +5,7 @@ import GetShuttleStopsByLineResponseDto from './response/get-shuttle-stop-by-lin
 const DOMAIN = "http://localhost:4000";
 const API_DOMAIN = "/api/v1";
 
-const GET_SHUTTLE_STOPS_BY_LINE_URL = (line:number) => `${API_DOMAIN}/shuttle/${line}`;
+const GET_SHUTTLE_STOPS_BY_LINE_URL = (line:number) => `${API_DOMAIN}/shuttle-stop/${line}`;
 export const getShuttleStopsByLineRequest = async(line:number) : Promise<GetShuttleStopsByLineResponseDto[]> => {
     const result = await axios.get(GET_SHUTTLE_STOPS_BY_LINE_URL(line))
     .then(response => {

@@ -2,7 +2,6 @@ package com.sarangmap.sarangmap_back.controller;
 
 import com.sarangmap.sarangmap_back.dto.request.ShuttleStopRegisterRequestDto;
 import com.sarangmap.sarangmap_back.dto.response.ShuttleStopListResponseDto;
-import com.sarangmap.sarangmap_back.dto.response.ShuttleStopRegisterResponseDto;
 import com.sarangmap.sarangmap_back.dto.response.ShuttleStopResponseDto;
 import com.sarangmap.sarangmap_back.service.ShuttleStopService;
 import lombok.RequiredArgsConstructor;
@@ -32,4 +31,11 @@ public class ShuttleStopController {
         ShuttleStopListResponseDto response = shuttleService.getAllShuttleStops();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+//    // 정류장 추가
+//    @PostMapping
+//    public ResponseEntity<ShuttleStopResponseDto> registerShuttleStop(@RequestBody ShuttleStopRegisterRequestDto shuttleStopRegisterRequestDto) {
+//        ShuttleStopResponseDto response = shuttleService.registerShuttleStop(shuttleStopRegisterRequestDto);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//    }
 }

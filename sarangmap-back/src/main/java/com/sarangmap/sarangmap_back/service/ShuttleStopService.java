@@ -1,11 +1,13 @@
 package com.sarangmap.sarangmap_back.service;
 
+import com.sarangmap.sarangmap_back.dto.request.ShuttleStopRegisterRequestDto;
 import com.sarangmap.sarangmap_back.dto.response.ShuttleStopListResponseDto;
 import com.sarangmap.sarangmap_back.dto.response.ShuttleStopResponseDto;
 import com.sarangmap.sarangmap_back.entity.ShuttleStop;
 import com.sarangmap.sarangmap_back.repository.ShuttleStopRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -34,4 +36,13 @@ public class ShuttleStopService {
 
         return ShuttleStopListResponseDto.from(shuttleStopDtos);
     }
+
+//    // 정류장 등록
+//    @Transactional
+//    public ShuttleStopResponseDto registerShuttleStop(ShuttleStopRegisterRequestDto shuttleStopRegisterRequestDto) {
+//        ShuttleStop shuttleStop = shuttleStopRegisterRequestDto.toEntity();
+//        shuttleStopRepository.save(shuttleStop);
+//
+//        return
+//    }
 }

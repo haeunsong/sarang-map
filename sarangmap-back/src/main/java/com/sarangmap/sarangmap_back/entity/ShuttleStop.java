@@ -28,4 +28,14 @@ public class ShuttleStop {
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy="shuttleStop", fetch=FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
     List<Image> imageList = new ArrayList<>(); // ShuttleStop 이 사용하는 이미지 목록 (한 정류소에 사진 2장 정도?)
+
+    @Builder
+    public ShuttleStop(Long id, String name, BigDecimal lat, BigDecimal lng, Long number, int line) {
+        this.id = id;
+        this.name = name;
+        this.lat = lat;
+        this.lng = lng;
+        this.number = number;
+        this.line = line;
+    }
 }
