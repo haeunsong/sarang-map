@@ -1,0 +1,62 @@
+/* 컨테이너 스타일 */
+.map-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #ddd;
+}
+
+/* 입력 폼 스타일 */
+.input-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 공통 인풋 스타일 */
+.input-field {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    flex: 1;
+}
+
+/* 버튼 스타일 */
+.submit-button {
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+    background-color: #45a049;
+}
+
+/* 지도 영역 스타일 */
+.map-wrapper {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 100px);
+}
+
+#map {
+    width: 90%;
+    height: 80%;
+}
+
+/* GPS 버튼 스타일 */
+.gps-button {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+}
