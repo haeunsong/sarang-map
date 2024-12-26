@@ -1,6 +1,7 @@
 package com.sarangmap.sarangmap_back.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,11 +12,17 @@ import lombok.NoArgsConstructor;
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+    private Long id;
 
-    String url;
+    private String url;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="shuttle_stop_id")
-    ShuttleStop shuttleStop;
+    private ShuttleStop shuttleStop;
+
+    @Builder
+    public Image(String url, ShuttleStop shuttleStop) {
+        this.url = url;
+        this.shuttleStop = shuttleStop;
+    }
 }

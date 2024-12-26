@@ -11,6 +11,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(name="shuttle_stops")
 public class ShuttleStop {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
